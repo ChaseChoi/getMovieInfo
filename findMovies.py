@@ -6,7 +6,8 @@ def getDownloadLink(movieList):
 	for link in movieList:
 		detailLink = baseUrl+link['href']
 		moviePage = requests.get(detailLink)
-		moviePage.encoding='gb2312'
+		# moviePage.encoding='gb2312'
+		moviePage.encoding='GBK'
 		moviePage.raise_for_status()
 
 		movieSoup = bs4.BeautifulSoup(moviePage.text, "lxml")
@@ -14,7 +15,6 @@ def getDownloadLink(movieList):
 		movieName = link.text
 		if len(downloadLinkEle) != 0:
 			extractedURL = downloadLinkEle[0].text
-			# fileToWrite.write("{}.name: {}\n{}".format(count, movieName, extractedURL))
 			print("{}.name: {}".format(count, movieName))
 			print(extractedURL)
 			count += 1
@@ -44,15 +44,12 @@ if numOfArgs == 2:
 	pagesToView = int(sys.argv[1])
 
 print("Num of pages to view: {}".format(pagesToView))
-# fileToWrite = open('/Users/chasechoi/Documents/MyTemp/movieInfo.md', 'w')
-# fileToWrite.write("Num of pages to view: {}".format(pagesToView))
-# fileToWrite.close()
-# fileToWrite = open('/Users/chasechoi/Documents/MyTemp/movieInfo.md', 'a')
 
 for i in range(pagesToView):
 	res = requests.get(nextPageLink)
 	# read the website code
-	res.encoding='gb2312'
+	# res.encoding='gb2312'
+	res.encoding='GBK'
 	res.raise_for_status() 
 	soup = bs4.BeautifulSoup(res.text, "lxml")
 	if i == 0:
@@ -60,14 +57,10 @@ for i in range(pagesToView):
 		print('Total: {}'.format(total))
 	tables = soup.select('a.ulink')
 	print("Page: {}/{}".format(i+1, pagesToView))
-
-	# fileToWrite.write("Page: {}/{}".format(i+1, pagesToView))
 	
 	getDownloadLink(tables)
 	nextPart = findNextLink(soup)
 	nextPageLink = "{}{}".format(url, nextPart)
-
-# fileToWrite.close()
 
 
 
